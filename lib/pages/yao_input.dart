@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:image_picker_web/image_picker_web.dart';
 
 class YaoInput extends StatefulWidget {
@@ -20,7 +19,6 @@ class _YaoInputState extends State<YaoInput> {
   String _jumlahTamu = '';
   String _keterangan = '';
   String _url = '';
-  double _uploadProgress = 0;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -36,9 +34,7 @@ class _YaoInputState extends State<YaoInput> {
         .putData(imageFile!.data!);
     task.snapshotEvents.listen((event) {
       final progress = event.bytesTransferred / event.totalBytes;
-      setState(() {
-        _uploadProgress = progress;
-      });
+      setState(() {});
     });
     final snapshot = await task.whenComplete(() => {});
     final downloadUrl = await snapshot.ref.getDownloadURL();
