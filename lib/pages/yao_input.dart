@@ -30,7 +30,7 @@ class _YaoInputState extends State<YaoInput> {
     final imageFile = await ImagePickerWeb.getImageInfo;
     final task = storage
         .ref()
-        .child('images/${DateTime.now()}')
+        .child('images/${DateTime.now()}.jpg')
         .putData(imageFile!.data!);
     task.snapshotEvents.listen((event) {
       final progress = event.bytesTransferred / event.totalBytes;
