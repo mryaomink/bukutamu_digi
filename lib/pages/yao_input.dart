@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker_web/image_picker_web.dart';
 
 class YaoInput extends StatefulWidget {
   const YaoInput({super.key});
@@ -27,20 +27,22 @@ class _YaoInputState extends State<YaoInput> {
   final ref = FirebaseFirestore.instance.collection('visitor');
 
   Future<void> _uploadFile() async {
-    final imageFile = await ImagePickerWeb.getImageInfo;
-    final task = storage
-        .ref()
-        .child('images/${DateTime.now()}.jpg')
-        .putData(imageFile!.data!);
-    task.snapshotEvents.listen((event) {
-      final progress = event.bytesTransferred / event.totalBytes;
-      setState(() {});
-    });
-    final snapshot = await task.whenComplete(() => {});
-    final downloadUrl = await snapshot.ref.getDownloadURL();
-    setState(() {
-      _url = downloadUrl;
-    });
+    final result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      final platformFile = result.files.first;
+      final task = storage
+          .ref()
+          .child('images/${DateTime.now()}.${platformFile.extension}')
+          .putData(platformFile.bytes!);
+      task.snapshotEvents.listen((event) {
+        setState(() {});
+      });
+      final snapshot = await task.whenComplete(() => {});
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+      setState(() {
+        _url = downloadUrl;
+      });
+    }
   }
 
   Future<void> _saveData() async {

@@ -1,7 +1,6 @@
+import 'package:buku_tamudigi/pages/guest_form.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-
-import 'pages/yao_input.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,11 +22,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Buku Tamu Digital',
-        theme: ThemeData(
-          brightness: Brightness.light,
-        ),
-        home: const YaoInput());
+      debugShowCheckedModeBanner: false,
+      title: 'Buku Tamu Digital',
+      theme: ThemeData(
+        brightness: Brightness.light,
+      ),
+      home: const GuestForm(),
+    );
   }
 }
