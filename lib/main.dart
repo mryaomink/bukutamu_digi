@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
       title: 'Buku Tamu Digital',
       theme: ThemeData(
         brightness: Brightness.light,
+        primaryColor: Colors.grey,
       ),
       home: const GuestForm(),
     );

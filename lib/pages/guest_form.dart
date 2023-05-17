@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'package:flutter_flushbar/flutter_flushbar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 Future<void> simpanData(String nama, imgUrl, instansi, keperluan, kontak,
     ditemui, jumlah, keterangan, DateTime tanggal) async {
@@ -94,48 +95,47 @@ class _GuestFormState extends State<GuestForm> {
     Flushbar(
       flushbarPosition: FlushbarPosition.TOP,
       backgroundColor: Colors.green,
-      duration: const Duration(seconds: 3),
-      titleText: const Text(
-        "Data Berhasil Disimpan",
-        style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20.0,
-            color: Colors.white,
-            fontFamily: "ShadowsIntoLightTwo"),
-      ),
-      messageText: const Text(
-        "Terima Kasih Atas kunjungannya,Semoga Hari anda Menyenangkan",
-        style: TextStyle(
-            fontSize: 16.0,
-            color: Colors.white,
-            fontFamily: "ShadowsIntoLightTwo"),
-      ),
+      duration: const Duration(seconds: 6),
+      titleText: Text("Data Berhasil Disimpan",
+          style: GoogleFonts.spaceGrotesk(fontSize: 20, color: Colors.white)),
+      messageText: Text(
+          "Terima Kasih Atas kunjungannya,Semoga Hari anda Menyenangkan",
+          style: GoogleFonts.spaceGrotesk(fontSize: 16, color: Colors.white)),
     ).show(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey,
       appBar: AppBar(
-        title: const Text("Guest CRUD"),
+        elevation: 7,
+        backgroundColor: Colors.grey,
+        title: Text(
+          "Buku Tamu",
+          style: GoogleFonts.spaceGrotesk(),
+        ),
         actions: const [],
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text('Tanggal:'),
-                  const SizedBox(width: 16.0),
+                  const Text(
+                    'Tanggal:',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   TextButton(
                     onPressed: () async {
                       DateTime? picked = await showDatePicker(
                         context: context,
                         initialDate: _selectedDate,
-                        firstDate: DateTime(2000),
+                        firstDate: DateTime(2023),
                         lastDate: DateTime(2100),
                       );
                       if (picked != null) {
@@ -151,11 +151,14 @@ class _GuestFormState extends State<GuestForm> {
                       }
                     },
                     child: Text(
-                      '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                      '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year},',
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
-                  const Text('Jam:'),
-                  const SizedBox(width: 16.0),
+                  const Text(
+                    'Jam:',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   TextButton(
                     onPressed: () async {
                       TimeOfDay? picked = await showTimePicker(
@@ -176,6 +179,7 @@ class _GuestFormState extends State<GuestForm> {
                     },
                     child: Text(
                       '${_selectedDate.hour}:${_selectedDate.minute}',
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 ],
@@ -189,7 +193,13 @@ class _GuestFormState extends State<GuestForm> {
                   child: TextField(
                     controller: namaC,
                     decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 4,
+                        ),
+                      ),
                       labelText: 'Nama',
+                      labelStyle: TextStyle(color: Colors.white),
                     ),
                   )),
               Container(
@@ -198,7 +208,13 @@ class _GuestFormState extends State<GuestForm> {
                   child: TextField(
                     controller: instansiC,
                     decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 4,
+                        ),
+                      ),
                       labelText: 'Instansi',
+                      labelStyle: TextStyle(color: Colors.white),
                     ),
                   )),
               Container(
@@ -207,7 +223,12 @@ class _GuestFormState extends State<GuestForm> {
                   child: TextField(
                     controller: keperluanC,
                     decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(width: 4, style: BorderStyle.solid),
+                      ),
                       labelText: 'Keperluan',
+                      labelStyle: TextStyle(color: Colors.white),
                     ),
                   )),
               Container(
@@ -216,7 +237,13 @@ class _GuestFormState extends State<GuestForm> {
                   child: TextField(
                     controller: kontakC,
                     decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 4,
+                        ),
+                      ),
                       labelText: 'Kontak',
+                      labelStyle: TextStyle(color: Colors.white),
                     ),
                   )),
               Container(
@@ -225,8 +252,13 @@ class _GuestFormState extends State<GuestForm> {
                   child: TextField(
                     controller: ditemuiC,
                     decoration: const InputDecoration(
-                      labelText: 'Yang Ditemui',
-                    ),
+                        labelText: 'Yang Ditemui',
+                        labelStyle: TextStyle(color: Colors.white),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            width: 4,
+                          ),
+                        )),
                   )),
               Container(
                   padding: const EdgeInsets.all(12),
@@ -234,24 +266,43 @@ class _GuestFormState extends State<GuestForm> {
                   child: TextField(
                     controller: jumlahC,
                     decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 4,
+                        ),
+                      ),
                       labelText: 'Jumlah Tamu',
+                      labelStyle: TextStyle(color: Colors.white),
                     ),
                   )),
               Container(
                   padding: const EdgeInsets.all(12),
                   margin: const EdgeInsets.only(),
                   child: TextField(
+                    maxLines: 2,
                     controller: keteranganC,
                     decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                        width: 4,
+                      )),
                       labelText: 'Keterangan',
+                      labelStyle: TextStyle(color: Colors.white),
                     ),
                   )),
               const SizedBox(
                 height: 20.0,
               ),
-              ElevatedButton(
-                onPressed: ambilGambar,
-                child: const Text('Pilih File'),
+              // ElevatedButton(
+              //   onPressed: ambilGambar,
+              //   child: const Text('Pilih File'),
+              // ),
+              // const SizedBox(
+              //   height: 20.0,
+              // ),
+              InkWell(
+                onTap: ambilGambar,
+                child: _buildBrutalism('Pilih File'),
               ),
               const SizedBox(
                 height: 20.0,
@@ -264,41 +315,70 @@ class _GuestFormState extends State<GuestForm> {
               const SizedBox(
                 height: 16.0,
               ),
-              SizedBox(
-                width: double.infinity,
-                height: 50.0,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                  ),
-                  onPressed: simpan,
-                  child: const Text("Simpan"),
-                ),
+              // SizedBox(
+              //   width: double.infinity,
+              //   height: 50.0,
+              //   child: ElevatedButton(
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: Colors.green,
+              //     ),
+              //     onPressed: simpan,
+              //     child: const Text("Simpan"),
+              //   ),
+              // ),
+              InkWell(
+                onTap: simpan,
+                child: _buildBrutalism('Simpan'),
               ),
               const SizedBox(
                 height: 20.0,
               ),
-              SizedBox(
-                width: double.infinity,
-                height: 50.0,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const YaoFilter(),
-                      ),
-                    );
-                  },
-                  child: const Text("Tampilkan Data"),
-                ),
+              // SizedBox(
+              //   width: double.infinity,
+              //   height: 50.0,
+              //   child: ElevatedButton(
+              //     style: ElevatedButton.styleFrom(
+              //       backgroundColor: Colors.blueGrey,
+              //     ),
+              //     onPressed: () {
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //           builder: (context) => const YaoFilter(),
+              //         ),
+              //       );
+              //     },
+              //     child: const Text("Tampilkan Data"),
+              //   ),
+              // ),
+              _buildBrutalism('Lihat Data'),
+              const SizedBox(
+                height: 20.0,
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBrutalism(final String judul) {
+    return Container(
+      alignment: Alignment.center,
+      width: double.infinity,
+      height: 50.0,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(20.0),
+          bottomLeft: Radius.circular(20.0),
+        ),
+        boxShadow: const [BoxShadow(color: Colors.black, offset: Offset(7, 7))],
+        border: Border.all(color: Colors.black, width: 4),
+      ),
+      child: Text(
+        judul,
+        style: GoogleFonts.spaceGrotesk(fontSize: 16.0),
       ),
     );
   }
