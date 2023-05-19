@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_flushbar/flutter_flushbar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class YaoInput extends StatefulWidget {
   const YaoInput({super.key});
@@ -11,6 +13,7 @@ class YaoInput extends StatefulWidget {
 }
 
 class _YaoInputState extends State<YaoInput> {
+  DateTime _selectedDate = DateTime.now();
   String _name = '';
   String _instansi = '';
   String _keperluan = '';
@@ -63,7 +66,7 @@ class _YaoInputState extends State<YaoInput> {
       'photoUrl': _url,
     });
 
-    print('Data saved successfully');
+    _showSuccessNotification();
     _formKey.currentState!.reset();
 
     setState(() {
@@ -78,18 +81,102 @@ class _YaoInputState extends State<YaoInput> {
     });
   }
 
+  void _showSuccessNotification() {
+    Flushbar(
+      flushbarPosition: FlushbarPosition.TOP,
+      backgroundColor: Colors.green,
+      duration: const Duration(seconds: 6),
+      titleText: Text("Data Berhasil Disimpan",
+          style: GoogleFonts.spaceGrotesk(fontSize: 20, color: Colors.white)),
+      messageText: Text(
+          "Terima Kasih Atas kunjungannya,Semoga Hari anda Menyenangkan",
+          style: GoogleFonts.spaceGrotesk(fontSize: 16, color: Colors.white)),
+    ).show(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: CustomScrollView(
       slivers: [
-        const SliverAppBar(
+        SliverAppBar(
+          flexibleSpace: FlexibleSpaceBar(
+            background: Image.network(
+              'https://images.unsplash.com/photo-1509343256512-d77a5cb3791b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80',
+              fit: BoxFit.cover,
+            ),
+          ),
           expandedHeight: 200.0,
-          backgroundColor: Color(0xff244CDB),
+          backgroundColor: Colors.grey,
         ),
         SliverList(
           delegate: SliverChildListDelegate(
             [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Tanggal:',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: _selectedDate,
+                        firstDate: DateTime(2023),
+                        lastDate: DateTime(2100),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _selectedDate = DateTime(
+                            picked.year,
+                            picked.month,
+                            picked.day,
+                            _selectedDate.hour,
+                            _selectedDate.minute,
+                          );
+                        });
+                      }
+                    },
+                    child: Text(
+                      '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year},',
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  const Text(
+                    'Jam:',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      TimeOfDay? picked = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.fromDateTime(_selectedDate),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _selectedDate = DateTime(
+                            _selectedDate.year,
+                            _selectedDate.month,
+                            _selectedDate.day,
+                            picked.hour,
+                            picked.minute,
+                          );
+                        });
+                      }
+                    },
+                    child: Text(
+                      '${_selectedDate.hour}:${_selectedDate.minute}',
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
               Form(
                 key: _formKey,
                 child: Padding(
@@ -272,46 +359,50 @@ class _YaoInputState extends State<YaoInput> {
                       const SizedBox(
                         height: 16.0,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                ),
-                                onPressed: _uploadFile,
-                                child: const Text("Upload File"),
-                              ),
-                              const SizedBox(
-                                height: 10.0,
-                              ),
-                              OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.black,
-                                  side: const BorderSide(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                onPressed: _saveData,
-                                child: const Text("Simpan"),
-                              ),
-                            ],
-                          ),
-                          // if (_url.isNotEmpty)
-                          //   Image.network(
-                          //     _url,
-                          //     fit: BoxFit.cover,
-                          //     width: 80,
-                          //     height: 80,
+                          // ElevatedButton(
+                          //   style: ElevatedButton.styleFrom(
+                          //     backgroundColor: Colors.blue,
                           //   ),
-                          // LinearProgressIndicator(value: _uploadProgress),
+                          //   onPressed: _uploadFile,
+                          //   child: const Text("Upload File"),
+                          // ),
+                          InkWell(
+                            onTap: _uploadFile,
+                            child: _buildBrutalism('Upload File'),
+                          ),
+                          const SizedBox(
+                            height: 20.0,
+                          ),
+                          // OutlinedButton(
+                          //   style: OutlinedButton.styleFrom(
+                          //     foregroundColor: Colors.black,
+                          //     side: const BorderSide(
+                          //       color: Colors.black,
+                          //     ),
+                          //   ),
+                          //   onPressed: _saveData,
+                          //   child: const Text("Simpan"),
+                          // ),
+
+                          InkWell(
+                            onTap: _saveData,
+                            child: _buildBrutalism('Simpan'),
+                          ),
                         ],
                       ),
+                      // if (_url.isNotEmpty)
+                      //   Image.network(
+                      //     _url,
+                      //     fit: BoxFit.cover,
+                      //     width: 80,
+                      //     height: 80,
+                      //   ),
+                      // LinearProgressIndicator(value: _uploadProgress),
                     ],
                   ),
                 ),
@@ -322,4 +413,25 @@ class _YaoInputState extends State<YaoInput> {
       ],
     ));
   }
+}
+
+Widget _buildBrutalism(final String judul) {
+  return Container(
+    alignment: Alignment.center,
+    width: double.infinity,
+    height: 50.0,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: const BorderRadius.only(
+        topRight: Radius.circular(20.0),
+        bottomLeft: Radius.circular(20.0),
+      ),
+      boxShadow: const [BoxShadow(color: Colors.black, offset: Offset(7, 7))],
+      border: Border.all(color: Colors.black, width: 4),
+    ),
+    child: Text(
+      judul,
+      style: GoogleFonts.spaceGrotesk(fontSize: 16.0),
+    ),
+  );
 }
