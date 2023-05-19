@@ -64,6 +64,7 @@ class _YaoInputState extends State<YaoInput> {
       'jumlah tamu': _jumlahTamu,
       'keterangan': _keterangan,
       'photoUrl': _url,
+      'tanggal': _selectedDate,
     });
 
     _showSuccessNotification();
@@ -78,6 +79,7 @@ class _YaoInputState extends State<YaoInput> {
       _jumlahTamu = '';
       _keterangan = '';
       _url = '';
+      _selectedDate;
     });
   }
 
@@ -112,67 +114,69 @@ class _YaoInputState extends State<YaoInput> {
         SliverList(
           delegate: SliverChildListDelegate(
             [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Tanggal:',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: _selectedDate,
-                        firstDate: DateTime(2023),
-                        lastDate: DateTime(2100),
-                      );
-                      if (picked != null) {
-                        setState(() {
-                          _selectedDate = DateTime(
-                            picked.year,
-                            picked.month,
-                            picked.day,
-                            _selectedDate.hour,
-                            _selectedDate.minute,
-                          );
-                        });
-                      }
-                    },
-                    child: Text(
-                      '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year},',
-                      style: const TextStyle(color: Colors.black),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Tanggal:',
+                      style: GoogleFonts.spaceGrotesk(color: Colors.black),
                     ),
-                  ),
-                  const Text(
-                    'Jam:',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      TimeOfDay? picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.fromDateTime(_selectedDate),
-                      );
-                      if (picked != null) {
-                        setState(() {
-                          _selectedDate = DateTime(
-                            _selectedDate.year,
-                            _selectedDate.month,
-                            _selectedDate.day,
-                            picked.hour,
-                            picked.minute,
-                          );
-                        });
-                      }
-                    },
-                    child: Text(
-                      '${_selectedDate.hour}:${_selectedDate.minute}',
-                      style: const TextStyle(color: Colors.black),
+                    TextButton(
+                      onPressed: () async {
+                        DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: _selectedDate,
+                          firstDate: DateTime(2023),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null) {
+                          setState(() {
+                            _selectedDate = DateTime(
+                              picked.year,
+                              picked.month,
+                              picked.day,
+                              _selectedDate.hour,
+                              _selectedDate.minute,
+                            );
+                          });
+                        }
+                      },
+                      child: Text(
+                          '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year},',
+                          style: GoogleFonts.spaceGrotesk(color: Colors.black)),
                     ),
-                  ),
-                ],
+                    Text(
+                      'Jam:',
+                      style: GoogleFonts.spaceGrotesk(color: Colors.black),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        TimeOfDay? picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.fromDateTime(_selectedDate),
+                        );
+                        if (picked != null) {
+                          setState(() {
+                            _selectedDate = DateTime(
+                              _selectedDate.year,
+                              _selectedDate.month,
+                              _selectedDate.day,
+                              picked.hour,
+                              picked.minute,
+                            );
+                          });
+                        }
+                      },
+                      child: Text(
+                        '${_selectedDate.hour}:${_selectedDate.minute}',
+                        style: GoogleFonts.spaceGrotesk(color: Colors.black),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(
                 height: 20.0,
@@ -185,14 +189,10 @@ class _YaoInputState extends State<YaoInput> {
                     children: [
                       TextFormField(
                         decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
                           labelText: 'Nama',
                           labelStyle: TextStyle(
                             color: Colors.blueGrey,
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
                           ),
                         ),
                         validator: (value) {
@@ -210,14 +210,10 @@ class _YaoInputState extends State<YaoInput> {
                       ),
                       TextFormField(
                         decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
                           labelText: 'Instansi',
                           labelStyle: TextStyle(
                             color: Colors.blueGrey,
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
                           ),
                         ),
                         validator: (value) {
@@ -235,14 +231,10 @@ class _YaoInputState extends State<YaoInput> {
                       ),
                       TextFormField(
                         decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
                           labelText: 'Keperluan',
                           labelStyle: TextStyle(
                             color: Colors.blueGrey,
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
                           ),
                         ),
                         validator: (value) {
@@ -260,14 +252,10 @@ class _YaoInputState extends State<YaoInput> {
                       ),
                       TextFormField(
                         decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
                           labelText: 'No.Telp (WA)',
                           labelStyle: TextStyle(
                             color: Colors.blueGrey,
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
                           ),
                         ),
                         validator: (value) {
@@ -285,14 +273,10 @@ class _YaoInputState extends State<YaoInput> {
                       ),
                       TextFormField(
                         decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
                           labelText: 'Yang Ditemui',
                           labelStyle: TextStyle(
                             color: Colors.blueGrey,
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
                           ),
                         ),
                         validator: (value) {
@@ -310,14 +294,10 @@ class _YaoInputState extends State<YaoInput> {
                       ),
                       TextFormField(
                         decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
                           labelText: 'Jumlah Tamu',
                           labelStyle: TextStyle(
                             color: Colors.blueGrey,
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
                           ),
                         ),
                         validator: (value) {
@@ -336,14 +316,10 @@ class _YaoInputState extends State<YaoInput> {
                       TextFormField(
                         maxLines: 3,
                         decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
                           labelText: 'Keterangan',
                           labelStyle: TextStyle(
                             color: Colors.blueGrey,
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
                           ),
                         ),
                         validator: (value) {
