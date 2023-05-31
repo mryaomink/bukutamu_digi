@@ -79,7 +79,7 @@ class _YaoInputState extends State<YaoInput> {
         //     });
         // ignore: use_build_context_synchronously
         Flushbar(
-          flushbarPosition: FlushbarPosition.TOP,
+          flushbarPosition: FlushbarPosition.BOTTOM,
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 3),
           titleText: Text("Gambar Berhasil Di Upload",
@@ -170,56 +170,19 @@ class _YaoInputState extends State<YaoInput> {
                       'Tanggal:',
                       style: GoogleFonts.spaceGrotesk(color: Colors.black),
                     ),
-                    TextButton(
-                      onPressed: () async {
-                        DateTime? picked = await showDatePicker(
-                          context: context,
-                          initialDate: _selectedDate,
-                          firstDate: DateTime(2023),
-                          lastDate: DateTime(2100),
-                        );
-                        if (picked != null) {
-                          setState(() {
-                            _selectedDate = DateTime(
-                              picked.year,
-                              picked.month,
-                              picked.day,
-                              _selectedDate.hour,
-                              _selectedDate.minute,
-                            );
-                          });
-                        }
-                      },
-                      child: Text(
-                          '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year},',
-                          style: GoogleFonts.spaceGrotesk(color: Colors.black)),
+                    Text(
+                        '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year},',
+                        style: GoogleFonts.spaceGrotesk(color: Colors.black)),
+                    const SizedBox(
+                      width: 8.0,
                     ),
                     Text(
                       'Jam:',
                       style: GoogleFonts.spaceGrotesk(color: Colors.black),
                     ),
-                    TextButton(
-                      onPressed: () async {
-                        TimeOfDay? picked = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.fromDateTime(_selectedDate),
-                        );
-                        if (picked != null) {
-                          setState(() {
-                            _selectedDate = DateTime(
-                              _selectedDate.year,
-                              _selectedDate.month,
-                              _selectedDate.day,
-                              picked.hour,
-                              picked.minute,
-                            );
-                          });
-                        }
-                      },
-                      child: Text(
-                        '${_selectedDate.hour}:${_selectedDate.minute}',
-                        style: GoogleFonts.spaceGrotesk(color: Colors.black),
-                      ),
+                    Text(
+                      '${_selectedDate.hour}:${_selectedDate.minute}',
+                      style: GoogleFonts.spaceGrotesk(color: Colors.black),
                     ),
                   ],
                 ),

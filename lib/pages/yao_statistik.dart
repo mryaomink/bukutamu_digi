@@ -1,7 +1,9 @@
+import 'dart:html' as html;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pdf/pdf.dart';
+// ignore: library_prefixes
 import 'package:pdf/widgets.dart' as pdfWidgets;
 import 'package:printing/printing.dart';
 
@@ -33,42 +35,70 @@ class _YaoStatistikState extends State<YaoStatistik> {
     });
   }
 
-  Future<void> generatePdf() async {
+  Future<void> reportPdf(List<DocumentSnapshot> data) async {
     final pdf = pdfWidgets.Document();
-
+    final font = await PdfGoogleFonts.nunitoExtraLight();
     pdf.addPage(
       pdfWidgets.Page(
-        build: (context) {
-          return pdfWidgets.ListView.builder(
-            itemCount: _filteredData.length,
-            itemBuilder: (context, index) {
-              DocumentSnapshot doc = _filteredData[index];
-              return pdfWidgets.Container(
-                padding: const pdfWidgets.EdgeInsets.all(10),
-                child: pdfWidgets.Column(
-                  crossAxisAlignment: pdfWidgets.CrossAxisAlignment.start,
-                  children: [
-                    pdfWidgets.Text(doc['name']),
-                    pdfWidgets.Text(doc['instansi']),
+        build: (pdfWidgets.Context context) {
+          return pdfWidgets.Center(
+            child: pdfWidgets.Text('Buku Tamu Report',
+                style: pdfWidgets.TextStyle(font: font)),
+          );
+        },
+      ),
+    );
+    pdf.addPage(
+      pdfWidgets.Page(
+        build: (pdfWidgets.Context context) {
+          return pdfWidgets.Center(
+            // ignore: deprecated_member_use
+            child: pdfWidgets.Table.fromTextArray(
+              headerStyle: pdfWidgets.TextStyle(
+                fontWeight: pdfWidgets.FontWeight.bold,
+              ),
+              cellAlignment: pdfWidgets.Alignment.center,
+              data: [
+                ['Tanggal', 'Nama', 'Instansi', 'No.Telp'],
+                ...data.map(
+                  (snapshot) => [
+                    snapshot['tanggal'].toDate().toString(),
+                    snapshot['name'].toString(),
+                    snapshot['instansi'].toString(),
+                    snapshot['kontak'].toString(),
                   ],
                 ),
-              );
-            },
+              ],
+            ),
           );
         },
       ),
     );
     final pdfBytes = await pdf.save();
-    await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => pdfBytes);
 
-    // final output = await getTemporaryDirectory();
-    // final outputFile = File('${output.path}/filtered_data.pdf');
+    // Create a blob from the PDF bytes
+    final blob = html.Blob([pdfBytes], 'application/pdf');
 
-    // await outputFile.writeAsBytes(await pdf.save());
+    // Create a download URL
+    final url = html.Url.createObjectUrlFromBlob(blob);
 
-    // Show the PDF document to the user
-    // (You can use any package or method to display the PDF here)
+    // Create a download anchor element
+    final anchor = html.document.createElement('a') as html.AnchorElement
+      ..href = url
+      ..style.display = 'none'
+      ..download = 'guest_book_report.pdf';
+
+    // Append the anchor element to the body
+    html.document.body!.children.add(anchor);
+
+    // Trigger a click event on the anchor element
+    anchor.click();
+
+    // Remove the anchor element from the body
+    html.document.body!.children.remove(anchor);
+
+    // Revoke the download URL
+    html.Url.revokeObjectUrl(url);
   }
 
   @override
@@ -80,7 +110,7 @@ class _YaoStatistikState extends State<YaoStatistik> {
         actions: [
           IconButton(
               onPressed: () {
-                generatePdf;
+                reportPdf(_filteredData);
               },
               icon: const Icon(Icons.picture_as_pdf))
         ],
@@ -171,7 +201,7 @@ class _YaoStatistikState extends State<YaoStatistik> {
                         child: Icon(Icons.supervised_user_circle_rounded),
                       ),
                       title: Text(
-                        doc['keperluan'],
+                        doc['name'],
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,6 +214,11 @@ class _YaoStatistikState extends State<YaoStatistik> {
                             DateFormat('HH:mm:ss')
                                 .format(doc['tanggal'].toDate()),
                           ),
+                          const SizedBox(height: 8.0),
+                          // Text(
+                          //   doc['kontak'],
+                          //   style: const TextStyle(color: Colors.lightBlue),
+                          // ),
                         ],
                       ),
                     ),
