@@ -1,3 +1,4 @@
+import 'package:buku_tamudigi/pages/yao_statistik.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -29,6 +30,9 @@ class _YaoInputState extends State<YaoInput> {
   final database = FirebaseFirestore.instance;
   final ref = FirebaseFirestore.instance.collection('visitor');
 
+  double _uploadProgress = 0.0;
+  bool _uploadComplete = false;
+
   Future<void> _uploadFile() async {
     final result = await FilePicker.platform.pickFiles();
     if (result != null) {
@@ -36,15 +40,56 @@ class _YaoInputState extends State<YaoInput> {
       final task = storage
           .ref()
           .child('images/${DateTime.now()}.${platformFile.extension}')
-          .putData(platformFile.bytes!);
-      task.snapshotEvents.listen((event) {
-        setState(() {});
+          .putData(
+            platformFile.bytes!,
+          );
+
+      task.snapshotEvents.listen((TaskSnapshot snapshot) {
+        setState(() {
+          _uploadProgress = snapshot.bytesTransferred / snapshot.totalBytes;
+          if (_uploadProgress == 1.0) {
+            _uploadComplete = true;
+          }
+        });
       });
       final snapshot = await task.whenComplete(() => {});
-      final downloadUrl = await snapshot.ref.getDownloadURL();
-      setState(() {
-        _url = downloadUrl;
-      });
+      if (snapshot.state == TaskState.success) {
+        final downloadUrl = await snapshot.ref.getDownloadURL();
+        setState(() {
+          _url = downloadUrl;
+          _uploadComplete = true;
+          _uploadProgress = 0.0;
+        });
+        // ignore: use_build_context_synchronously
+        // showDialog(
+        //     context: context,
+        //     builder: (BuildContext context) {
+        //       return AlertDialog(
+        //         title: const Center(child: Text('Upload Progress')),
+        //         content: const Text('Gambar Berhasil di Upload'),
+        //         actions: [
+        //           TextButton(
+        //             onPressed: () {
+        //               Navigator.pop(context);
+        //             },
+        //             child: Text('Ok'),
+        //           ),
+        //         ],
+        //       );
+        //     });
+        // ignore: use_build_context_synchronously
+        Flushbar(
+          flushbarPosition: FlushbarPosition.TOP,
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 3),
+          titleText: Text("Gambar Berhasil Di Upload",
+              style:
+                  GoogleFonts.spaceGrotesk(fontSize: 20, color: Colors.white)),
+          messageText: Text("Upload Gambar Sukses",
+              style:
+                  GoogleFonts.spaceGrotesk(fontSize: 16, color: Colors.white)),
+        ).show(context);
+      }
     }
   }
 
@@ -115,7 +160,8 @@ class _YaoInputState extends State<YaoInput> {
           delegate: SliverChildListDelegate(
             [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 20.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -352,6 +398,10 @@ class _YaoInputState extends State<YaoInput> {
                             child: _buildBrutalism('Upload File'),
                           ),
                           const SizedBox(
+                            height: 16.0,
+                          ),
+                          _buildUploadProgress(),
+                          const SizedBox(
                             height: 20.0,
                           ),
                           // OutlinedButton(
@@ -368,6 +418,20 @@ class _YaoInputState extends State<YaoInput> {
                           InkWell(
                             onTap: _saveData,
                             child: _buildBrutalism('Simpan'),
+                          ),
+                          const SizedBox(
+                            height: 20.0,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const YaoStatistik(),
+                                ),
+                              );
+                            },
+                            child: _buildBrutalism('Dashboard'),
                           ),
                         ],
                       ),
@@ -388,6 +452,23 @@ class _YaoInputState extends State<YaoInput> {
         ),
       ],
     ));
+  }
+
+  Widget _buildUploadProgress() {
+    if (_uploadComplete) {
+      return Text(
+        'Upload Berhasil',
+        style: GoogleFonts.spaceGrotesk(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    } else {
+      return LinearProgressIndicator(
+        value: _uploadProgress,
+        color: Colors.greenAccent,
+      );
+    }
   }
 }
 

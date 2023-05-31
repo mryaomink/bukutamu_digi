@@ -144,8 +144,9 @@ Stream<QuerySnapshot> getData(DateTime selectedDate) {
       DateTime(selectedDate.year, selectedDate.month, selectedDate.day + 1);
 
   return FirebaseFirestore.instance
-      .collection('myguest')
+      .collection('visitor')
       .where('tanggal', isGreaterThanOrEqualTo: startDate)
-      .where('tanggal', isLessThanOrEqualTo: endDate)
+      .where('tanggal', isLessThan: endDate)
+      .orderBy('tanggal', descending: true)
       .snapshots();
 }
