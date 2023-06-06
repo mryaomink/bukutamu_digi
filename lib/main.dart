@@ -1,4 +1,4 @@
-import 'package:buku_tamudigi/pages/yao_input.dart';
+import 'package:buku_tamudigi/pages/yao_sp.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         primaryColor: Colors.grey,
       ),
-      home: const YaoInput(),
+      home: const YaoSp(),
     );
   }
 }

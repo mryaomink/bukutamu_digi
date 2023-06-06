@@ -19,7 +19,7 @@ class _GuestDashState extends State<GuestDash> {
 
   Future<int> getTotalRecord() async {
     QuerySnapshot snapshot =
-        await FirebaseFirestore.instance.collection('myguest').get();
+        await FirebaseFirestore.instance.collection('visitor').get();
     return snapshot.size;
   }
 

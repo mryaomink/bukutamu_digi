@@ -1,3 +1,4 @@
+import 'package:buku_tamudigi/pages/yao_chart.dart';
 import 'package:buku_tamudigi/pages/yao_statistik.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -13,7 +14,43 @@ class YaoInput extends StatefulWidget {
   State<YaoInput> createState() => _YaoInputState();
 }
 
-class _YaoInputState extends State<YaoInput> {
+class _YaoInputState extends State<YaoInput> with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late AnimationController _uploadController;
+  late Animation<double> _animation;
+  late Animation<double> _uploadAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _animation = Tween<double>(begin: 1.0, end: 0.8).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _uploadController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _uploadAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+      CurvedAnimation(parent: _uploadController, curve: Curves.easeInOut),
+    );
+  }
+
+  void _startButtonAnim(AnimationController controller) {
+    controller.reset();
+    controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _uploadController.dispose();
+    super.dispose();
+  }
+
   DateTime _selectedDate = DateTime.now();
   String _name = '';
   String _instansi = '';
@@ -79,7 +116,7 @@ class _YaoInputState extends State<YaoInput> {
         //     });
         // ignore: use_build_context_synchronously
         Flushbar(
-          flushbarPosition: FlushbarPosition.BOTTOM,
+          flushbarPosition: FlushbarPosition.TOP,
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 3),
           titleText: Text("Gambar Berhasil Di Upload",
@@ -356,10 +393,22 @@ class _YaoInputState extends State<YaoInput> {
                           //   onPressed: _uploadFile,
                           //   child: const Text("Upload File"),
                           // ),
-                          InkWell(
-                            onTap: _uploadFile,
-                            child: _buildBrutalism('Upload File'),
-                          ),
+                          AnimatedBuilder(
+                              animation: _uploadAnimation,
+                              builder: (BuildContext context, Widget? child) {
+                                return GestureDetector(
+                                  onTapDown: (_) =>
+                                      _startButtonAnim(_uploadController),
+                                  onTap: () {
+                                    _uploadFile();
+                                    _uploadController.reverse();
+                                  },
+                                  child: Transform.scale(
+                                    scale: _uploadAnimation.value,
+                                    child: _buildBrutalism('Upload file'),
+                                  ),
+                                );
+                              }),
                           const SizedBox(
                             height: 16.0,
                           ),
@@ -378,10 +427,26 @@ class _YaoInputState extends State<YaoInput> {
                           //   child: const Text("Simpan"),
                           // ),
 
-                          InkWell(
-                            onTap: _saveData,
-                            child: _buildBrutalism('Simpan'),
-                          ),
+                          // InkWell(
+                          //   onTap: _saveData,
+                          //   child: _buildBrutalism('Simpan'),
+                          // ),
+                          AnimatedBuilder(
+                              animation: _animation,
+                              builder: (BuildContext context, Widget? child) {
+                                return GestureDetector(
+                                  onTapDown: (_) =>
+                                      _startButtonAnim(_animationController),
+                                  onTap: () {
+                                    _animationController.reverse();
+                                    _saveData();
+                                  },
+                                  child: Transform.scale(
+                                    scale: _animation.value,
+                                    child: _buildBrutalism('Simpan'),
+                                  ),
+                                );
+                              }),
                           const SizedBox(
                             height: 20.0,
                           ),
@@ -395,6 +460,9 @@ class _YaoInputState extends State<YaoInput> {
                               );
                             },
                             child: _buildBrutalism('Dashboard'),
+                          ),
+                          const SizedBox(
+                            height: 20.0,
                           ),
                         ],
                       ),
@@ -428,6 +496,7 @@ class _YaoInputState extends State<YaoInput> {
       );
     } else {
       return LinearProgressIndicator(
+        minHeight: 8,
         value: _uploadProgress,
         color: Colors.greenAccent,
       );
